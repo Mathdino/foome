@@ -1,3 +1,4 @@
+import CartButton from "@/components/CartButton";
 import { images, offers } from "@/constants";
 import cn from "clsx";
 import { Fragment } from "react";
@@ -10,7 +11,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import "./globals.css";
+import "../globals.css";
 
 export default function Index() {
   return (
@@ -77,7 +78,7 @@ export default function Index() {
               </TouchableOpacity>
             </View>
 
-            <Text>Carrinho</Text>
+            <CartButton />
           </View>
         )}
       />
