@@ -1,7 +1,8 @@
 import { CustomInputProps } from "@/type";
+import { Ionicons } from "@expo/vector-icons";
 import cn from "clsx";
 import React, { useState } from "react";
-import { Text, TextInput, View } from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 const Custominput = ({
   placeholder = "Escreva algo",
@@ -12,26 +13,45 @@ const Custominput = ({
   keyboardType = "default",
 }: CustomInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
     <View className="w-full">
       <Text className="label">{label}</Text>
 
-      <TextInput
-        autoCapitalize="none"
-        autoCorrect={false}
-        value={value}
-        onChangeText={onChangeText}
-        secureTextEntry={secureTextEntry}
-        keyboardType={keyboardType}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        placeholder={placeholder}
-        placeholderTextColor="#888"
+      <View
         className={cn(
-          "input",
+          "input flex-row items-center",
           isFocused ? "border-primary" : "border-gray-300",
         )}
-      />
+      >
+        <TextInput
+          autoCapitalize="none"
+          autoCorrect={false}
+          value={value}
+          onChangeText={onChangeText}
+          secureTextEntry={secureTextEntry && !showPassword}
+          keyboardType={keyboardType}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          placeholder={placeholder}
+          placeholderTextColor="#888"
+          className="flex-1"
+        />
+
+        {secureTextEntry && (
+          <TouchableOpacity
+            onPress={() => setShowPassword((prev) => !prev)}
+            className="pl-2"
+          >
+            <Ionicons
+              name={showPassword ? "eye-off-outline" : "eye-outline"}
+              size={20}
+              color="#888"
+            />
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 };
