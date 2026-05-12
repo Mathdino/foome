@@ -6,6 +6,7 @@ import {
   Databases,
   ID,
   Query,
+  Storage,
 } from "react-native-appwrite";
 
 export const appWriteConfig = {
@@ -13,7 +14,12 @@ export const appWriteConfig = {
   platform: "com.foome",
   projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!,
   databaseId: "6a023a12000993b55e80",
+  bucketId: "6a038a35001352b683f2",
   userCollectionId: "user",
+  categoriesCollectionId: "categories",
+  menuCollectionId: "menu",
+  customizationsCollectionId: "customizations",
+  menuCustomizationsCollectionId: "menu_customizations",
 };
 
 export const client = new Client();
@@ -25,6 +31,7 @@ client.setPlatform(appWriteConfig.platform);
 export const account = new Account(client);
 export const database = new Databases(client);
 export const avatars = new Avatars(client);
+export const storage = new Storage(client);
 
 export const createUser = async ({
   email,
