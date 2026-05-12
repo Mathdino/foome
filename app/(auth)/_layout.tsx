@@ -1,5 +1,3 @@
-import CustomButton from "@/components/CustomButton";
-import Custominput from "@/components/Custominput";
 import { images } from "@/constants";
 import { Slot } from "expo-router";
 import React from "react";
@@ -37,11 +35,8 @@ export default function _Layout() {
             resizeMode="contain"
           />
         </View>
-
-        <Custominput />
-        <CustomButton />
+        <Slot />
       </ScrollView>
-      <Slot />
     </KeyboardAvoidingView>
   );
 }
