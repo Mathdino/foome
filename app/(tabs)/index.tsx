@@ -21,71 +21,75 @@ export default function Index() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <AnimatedScreen>
-      <View className="flex-between flex-row w-full my-5 px-5">
-        <View className="flex-start">
-          <Text className="small-bold text-primary">DELIVERY </Text>
-          <TouchableOpacity className="flex-center flex-row gap-x-2 mt-0.5">
-            <Text className="paragraph-bold text-dark-100">São Paulo</Text>
-            <Image
-              source={images.arrowDown}
-              className="size-3"
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
+        <View className="flex-between flex-row w-full my-5 px-5">
+          <View className="flex-start">
+            <Text className="small-bold text-primary uppercase">
+              BEM VINDO {user?.name}
+            </Text>
+            <TouchableOpacity className="flex-center flex-row gap-x-2 mt-0.5">
+              <Text className="paragraph-bold text-dark-100">
+                {user?.addresses?.[0] || "Sem endereço cadastrado"}
+              </Text>
+              <Image
+                source={images.arrowDown}
+                className="size-3"
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          </View>
+
+          <CartButton />
         </View>
 
-        <CartButton />
-      </View>
+        <FlatList
+          data={offers}
+          renderItem={({ item, index }) => {
+            const isEven: boolean = index % 2 === 0;
 
-      <FlatList
-        data={offers}
-        renderItem={({ item, index }) => {
-          const isEven: boolean = index % 2 === 0;
+            return (
+              <View>
+                <Pressable
+                  className={cn(
+                    "offer-card",
+                    isEven ? "flex-row-reverse" : "flex-row",
+                  )}
+                  style={{ backgroundColor: item.color }}
+                  android_ripple={{ color: "#fffff22" }}
+                >
+                  {({ pressed }) => (
+                    <Fragment>
+                      <View className={"h-full w-[50%]"}>
+                        <Image
+                          source={item.image}
+                          className={"size-full"}
+                          resizeMode="cover"
+                        />
+                      </View>
 
-          return (
-            <View>
-              <Pressable
-                className={cn(
-                  "offer-card",
-                  isEven ? "flex-row-reverse" : "flex-row",
-                )}
-                style={{ backgroundColor: item.color }}
-                android_ripple={{ color: "#fffff22" }}
-              >
-                {({ pressed }) => (
-                  <Fragment>
-                    <View className={"h-full w-[50%]"}>
-                      <Image
-                        source={item.image}
-                        className={"size-full"}
-                        resizeMode="cover"
-                      />
-                    </View>
-
-                    <View
-                      className={cn(
-                        "offer-card__info",
-                        isEven ? "pl-5" : "pr-5",
-                      )}
-                    >
-                      <Text className="h1-bold text-white leading-tight">
-                        {item.title}
-                      </Text>
-                      <Image
-                        source={images.arrowRight}
-                        className="size-10"
-                        resizeMode="contain"
-                        tintColor="#ffffff"
-                      />
-                    </View>
-                  </Fragment>
-                )}
-              </Pressable>
-            </View>
-          );
-        }}
-        contentContainerClassName="pb-28 px-5"
-      />
+                      <View
+                        className={cn(
+                          "offer-card__info",
+                          isEven ? "pl-5" : "pr-5",
+                        )}
+                      >
+                        <Text className="h1-bold text-white leading-tight">
+                          {item.title}
+                        </Text>
+                        <Image
+                          source={images.arrowRight}
+                          className="size-10"
+                          resizeMode="contain"
+                          tintColor="#ffffff"
+                        />
+                      </View>
+                    </Fragment>
+                  )}
+                </Pressable>
+              </View>
+            );
+          }}
+          contentContainerClassName="pb-28 px-5"
+        />
       </AnimatedScreen>
     </SafeAreaView>
   );

@@ -1,4 +1,9 @@
-import { CreateUserPrams, GetMenuParams, SignInParams } from "@/type";
+import {
+  CreateUserPrams,
+  GetMenuParams,
+  SignInParams,
+  UpdateUserProfileParams,
+} from "@/type";
 import {
   Account,
   Avatars,
@@ -39,11 +44,31 @@ export const createUser = async ({
   name,
 }: CreateUserPrams) => {
   try {
-    const newAccount = await account.create(ID.unique(), email, password, name);
+    try {
+      await account.deleteSession("current");
+    } catch {}
+
+    let newAccount;
+    try {
+      newAccount = await account.create(ID.unique(), email, password, name);
+    } catch (err: any) {
+      const code = err?.code ?? err?.response?.code;
+      const type = err?.type ?? err?.response?.type;
+      if (code === 409 || type === "user_already_exists") {
+        throw new Error(
+          "Já existe uma conta com este e-mail. Faça login ou use outro e-mail.",
+        );
+      }
+      throw err;
+    }
 
     if (!newAccount) {
       throw new Error("Usuário não criado");
     }
+
+    try {
+      await account.deleteSessions();
+    } catch {}
 
     await signIn({ email, password });
 
@@ -60,8 +85,8 @@ export const createUser = async ({
         avatar: avatarUrl,
       },
     );
-  } catch (e) {
-    throw new Error(e as string);
+  } catch (e: any) {
+    throw new Error(e?.message ?? String(e));
   }
 };
 
@@ -95,6 +120,95 @@ export const getCurrentUser = async () => {
     return currentUser.documents[0];
   } catch (e) {
     console.log(e);
+    throw new Error(e as string);
+  }
+};
+
+export const updateUserProfile = async ({
+  userId,
+  name,
+  phones,
+  addresses,
+}: UpdateUserProfileParams) => {
+  try {
+    const data: Record<string, any> = {};
+    if (name !== undefined) data.name = name;
+    if (phones !== undefined) data.phones = phones;
+    if (addresses !== undefined) data.addresses = addresses;
+
+    return await database.updateDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.userCollectionId,
+      userId,
+      data,
+    );
+  } catch (e) {
+    throw new Error(e as string);
+  }
+};
+
+type UploadAvatarFile = {
+  uri: string;
+  name: string;
+  type: string;
+  size: number;
+};
+
+export const uploadAvatar = async (file: UploadAvatarFile) => {
+  try {
+    const uploaded = await storage.createFile(
+      appWriteConfig.bucketId,
+      ID.unique(),
+      file,
+    );
+
+    return `${appWriteConfig.endpoint}/storage/buckets/${appWriteConfig.bucketId}/files/${uploaded.$id}/view?project=${appWriteConfig.projectId}`;
+  } catch (e) {
+    throw new Error(e as string);
+  }
+};
+
+export const updateUserAvatar = async (userId: string, avatarUrl: string) => {
+  try {
+    return await database.updateDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.userCollectionId,
+      userId,
+      { avatar: avatarUrl },
+    );
+  } catch (e) {
+    throw new Error(e as string);
+  }
+};
+
+export const signOut = async () => {
+  try {
+    await account.deleteSession("current");
+  } catch (e) {
+    throw new Error(e as string);
+  }
+};
+
+export const getMenuById = async (id: string) => {
+  try {
+    const menu = await database.getDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.menuCollectionId,
+      id,
+    );
+
+    const links = await database.listDocuments(
+      appWriteConfig.databaseId,
+      appWriteConfig.menuCustomizationsCollectionId,
+      [Query.equal("menu", id)],
+    );
+
+    const customizations = links.documents
+      .map((l: any) => l.customizations)
+      .filter(Boolean);
+
+    return { menu, customizations };
+  } catch (e) {
     throw new Error(e as string);
   }
 };
