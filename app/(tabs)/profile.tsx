@@ -1,6 +1,6 @@
 import AnimatedScreen from "@/components/AnimatedScreen";
 import CustomButton from "@/components/CustomButton";
-import CustomHeader from "@/components/CustomHeader";
+import CustomHeaderButton from "@/components/CustomHeaderButton";
 import { images } from "@/constants";
 import { signOut } from "@/lib/appwrite";
 import useAuthStore from "@/store/auth.store";
@@ -79,7 +79,7 @@ const Profile = () => {
     <SafeAreaView className="bg-white h-full">
       <AnimatedScreen>
         <ScrollView contentContainerClassName="pb-28 px-5 pt-5">
-          <CustomHeader title="Perfil" />
+          <CustomHeaderButton title="Perfil" />
 
           <View className="items-center mb-2">
             <View className="relative">

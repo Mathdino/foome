@@ -203,11 +203,42 @@ export const getMenuById = async (id: string) => {
       [Query.equal("menu", id)],
     );
 
-    const customizations = links.documents
-      .map((l: any) => l.customizations)
-      .filter(Boolean);
+    const customizations = await Promise.all(
+      links.documents.map(async (l: any) => {
+        const c = l.customizations;
+        if (c && typeof c === "object" && c.$id) return c;
+        if (typeof c === "string") {
+          try {
+            return await database.getDocument(
+              appWriteConfig.databaseId,
+              appWriteConfig.customizationsCollectionId,
+              c,
+            );
+          } catch {
+            return null;
+          }
+        }
+        return null;
+      }),
+    );
 
-    return { menu, customizations };
+    let category: any = (menu as any).categories;
+    if (category && typeof category === "string") {
+      try {
+        category = await database.getDocument(
+          appWriteConfig.databaseId,
+          appWriteConfig.categoriesCollectionId,
+          category,
+        );
+      } catch {
+        category = null;
+      }
+    }
+
+    return {
+      menu: { ...menu, category },
+      customizations: customizations.filter(Boolean),
+    };
   } catch (e) {
     throw new Error(e as string);
   }

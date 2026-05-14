@@ -1,5 +1,5 @@
 import AnimatedScreen from "@/components/AnimatedScreen";
-import CustomHeader from "@/components/CustomHeader";
+import CustomHeaderButton from "@/components/CustomHeaderButton";
 import { images } from "@/constants";
 import { appWriteConfig, getMenuById } from "@/lib/appwrite";
 import { getCustomizationImage } from "@/lib/customizationImages";
@@ -34,6 +34,7 @@ type MenuDoc = {
   calories: number;
   protein: number;
   categories?: { name?: string } | string;
+  category?: { name?: string } | null;
 };
 
 const formatPrice = (v: number) => `R$ ${v.toFixed(2).replace(".", ",")}`;
@@ -66,7 +67,7 @@ const CustomizationCard = ({
   onAdd: () => void;
 }) => (
   <View
-    className="w-24 mr-3 rounded-2xl bg-white items-center pt-3"
+    className="w-28 mr-3 rounded-2xl bg-white items-center pt-4"
     style={{
       elevation: 4,
       shadowColor: "#878787",
@@ -77,14 +78,11 @@ const CustomizationCard = ({
   >
     <Image
       source={getCustomizationImage(item.name)}
-      className="w-16 h-16"
+      className="w-20 h-20"
       resizeMode="contain"
     />
-    <View className="w-full flex-row items-center justify-between bg-dark-100 rounded-b-2xl px-2 py-1 mt-2">
-      <Text
-        className="text-white small-bold flex-1"
-        numberOfLines={1}
-      >
+    <View className="w-full flex-row items-center justify-between bg-dark-100 rounded-b-2xl px-2 py-2 mt-2">
+      <Text className="text-white small-bold flex-1" numberOfLines={1}>
         {item.name}
       </Text>
       <TouchableOpacity
@@ -139,9 +137,8 @@ const MenuDetails = () => {
   const toppings = customizations.filter((c) => c.type === "topping");
   const sides = customizations.filter((c) => c.type === "side");
   const categoryName =
-    typeof menu.categories === "object"
-      ? menu.categories?.name
-      : (menu.categories as string | undefined);
+    menu.category?.name ??
+    (typeof menu.categories === "object" ? menu.categories?.name : undefined);
 
   const extras = selected.reduce((sum, c) => sum + c.price, 0);
   const total = (menu.price + extras) * qty;
@@ -150,10 +147,7 @@ const MenuDetails = () => {
     setSelected((prev) =>
       prev.some((p) => p.id === c.$id)
         ? prev.filter((p) => p.id !== c.$id)
-        : [
-            ...prev,
-            { id: c.$id, name: c.name, price: c.price, type: c.type },
-          ],
+        : [...prev, { id: c.$id, name: c.name, price: c.price, type: c.type }],
     );
   };
 
@@ -173,27 +167,40 @@ const MenuDetails = () => {
     <SafeAreaView className="bg-white h-full">
       <AnimatedScreen>
         <ScrollView contentContainerClassName="pb-40 px-5 pt-5">
-          <CustomHeader />
+          <CustomHeaderButton title={menu.name} />
 
-          <View className="flex-row mt-4">
-            <View className="flex-1 pr-3">
+          <View className="relative mt-4 min-h-[260px]">
+            <Image
+              source={{ uri: imageUrl }}
+              style={{
+                position: "absolute",
+                width: 320,
+                height: 320,
+                top: -20,
+                right: -120,
+              }}
+              resizeMode="contain"
+            />
+            <View className="w-1/2 pr-3">
               <Text className="h3-bold text-dark-100" numberOfLines={2}>
                 {menu.name}
               </Text>
               {!!categoryName && (
-                <Text className="body-regular text-gray-200 mt-1">
+                <Text className="py-1 small-regular text-gray-200">
                   {categoryName}
                 </Text>
               )}
 
-              <View className="flex-row items-center mt-2 gap-1">
+              <View className="flex-row items-center mt-2 gap-1 flex-wrap">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Image
                     key={i}
                     source={images.star}
                     className="w-4 h-4"
                     resizeMode="contain"
-                    tintColor={i < Math.round(menu.rating) ? "#FE8C00" : "#E0E0E0"}
+                    tintColor={
+                      i < Math.round(menu.rating) ? "#FE8C00" : "#E0E0E0"
+                    }
                   />
                 ))}
                 <Text className="small-bold text-dark-100 ml-1">
@@ -220,18 +227,16 @@ const MenuDetails = () => {
                 </View>
               </View>
             </View>
-
-            <Image
-              source={{ uri: imageUrl }}
-              className="w-40 h-40"
-              resizeMode="contain"
-            />
           </View>
 
-          <View className="bg-primary/10 rounded-2xl flex-row justify-between items-center px-4 py-3 mt-4">
-            <Pill icon={images.dollar} text="Entrega Grátis" iconTint="#FE8C00" />
+          <View className="bg-primary/10 rounded-2xl flex-row justify-between items-center px-4 py-3 mt-6">
+            <Pill icon={images.moto} text="Entrega Grátis" iconTint="#FE8C00" />
             <Pill icon={images.clock} text="20 - 30 min" iconTint="#FE8C00" />
-            <Pill icon={images.star} text={menu.rating?.toFixed(1)} iconTint="#FE8C00" />
+            <Pill
+              icon={images.star}
+              text={menu.rating?.toFixed(1)}
+              iconTint="#FE8C00"
+            />
           </View>
 
           <Text className="body-regular text-gray-200 mt-4">
@@ -277,25 +282,23 @@ const MenuDetails = () => {
           <View className="flex-row items-center gap-3">
             <TouchableOpacity
               onPress={() => setQty((q) => Math.max(1, q - 1))}
-              className="w-8 h-8 rounded-full bg-gray-100 items-center justify-center"
+              className="w-8 h-8 rounded-full items-center justify-center"
             >
               <Image
                 source={images.minus}
-                className="w-3 h-3"
+                className="w-5 h-5"
                 resizeMode="contain"
-                tintColor="#1a1a1a"
               />
             </TouchableOpacity>
             <Text className="paragraph-bold text-dark-100">{qty}</Text>
             <TouchableOpacity
               onPress={() => setQty((q) => q + 1)}
-              className="w-8 h-8 rounded-full bg-gray-100 items-center justify-center"
+              className="w-8 h-8 rounded-full items-center justify-center"
             >
               <Image
                 source={images.plus}
-                className="w-3 h-3"
+                className="w-5 h-5"
                 resizeMode="contain"
-                tintColor="#1a1a1a"
               />
             </TouchableOpacity>
           </View>
@@ -311,7 +314,7 @@ const MenuDetails = () => {
               tintColor="#FFFFFF"
             />
             <Text className="paragraph-bold text-white">
-              Adicionar ao carrinho ({formatPrice(total)})
+              Adicionar ({formatPrice(total)})
             </Text>
           </TouchableOpacity>
         </View>

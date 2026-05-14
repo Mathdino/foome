@@ -24,7 +24,7 @@ export default function Index() {
         <View className="flex-between flex-row w-full my-5 px-5">
           <View className="flex-start">
             <Text className="small-bold text-primary uppercase">
-              BEM VINDO {user?.name}
+              BEM VINDO - {user?.name}
             </Text>
             <TouchableOpacity className="flex-center flex-row gap-x-2 mt-0.5">
               <Text className="paragraph-bold text-dark-100">

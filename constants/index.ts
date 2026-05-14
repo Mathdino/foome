@@ -9,6 +9,7 @@ import home from "@/assets/icons/home.png";
 import location from "@/assets/icons/location.png";
 import logout from "@/assets/icons/logout.png";
 import minus from "@/assets/icons/minus.png";
+import moto from "@/assets/icons/motorbike.png";
 import pencil from "@/assets/icons/pencil.png";
 import person from "@/assets/icons/person.png";
 import phone from "@/assets/icons/phone.png";
@@ -17,30 +18,39 @@ import search from "@/assets/icons/search.png";
 import star from "@/assets/icons/star.png";
 import trash from "@/assets/icons/trash.png";
 import user from "@/assets/icons/user.png";
-import arrowBack from "../assets/icons/arrow-back.png";
-
 import avatar from "@/assets/images/avatar.png";
 import avocado from "@/assets/images/avocado.png";
+import azeitona from "@/assets/images/azeitona.png";
 import bacon from "@/assets/images/bacon.png";
+import batataru from "@/assets/images/batataru.png";
+import bolo from "@/assets/images/bolo.png";
 import burgerOne from "@/assets/images/burger-one.png";
 import burgerTwo from "@/assets/images/burger-two.png";
 import buritto from "@/assets/images/buritto.png";
 import cadastroGraphic from "@/assets/images/cadastro-graphic.png";
+import cha from "@/assets/images/cha.png";
 import cheese from "@/assets/images/cheese.png";
+import cocacola from "@/assets/images/cocacola.png";
 import coleslaw from "@/assets/images/coleslaw.png";
 import cucumber from "@/assets/images/cucumber.png";
 import emptyState from "@/assets/images/empty-state.png";
 import fries from "@/assets/images/fries.png";
+import guarana from "@/assets/images/guarana.png";
+import jalapenos from "@/assets/images/jalapenos.png";
 import loginGraphic from "@/assets/images/login-graphic.png";
 import logo from "@/assets/images/logo.png";
+import milho from "@/assets/images/milho.png";
 import mozarellaSticks from "@/assets/images/mozarella-sticks.png";
 import mushrooms from "@/assets/images/mushrooms.png";
+import nuggets from "@/assets/images/nuggets.png";
 import onionRings from "@/assets/images/onion-rings.png";
 import onions from "@/assets/images/onions.png";
+import paodealho from "@/assets/images/paodealho.png";
 import pizzaOne from "@/assets/images/pizza-one.png";
 import salad from "@/assets/images/salad.png";
 import success from "@/assets/images/success.png";
 import tomatoes from "@/assets/images/tomatoes.png";
+import arrowBack from "../assets/icons/arrow-back.png";
 
 export const CATEGORIES = [
   {
@@ -169,6 +179,8 @@ export const images = {
   coleslaw,
   cucumber,
   emptyState,
+  cocacola,
+  guarana,
   fries,
   loginGraphic,
   cadastroGraphic,
@@ -180,6 +192,14 @@ export const images = {
   pizzaOne,
   salad,
   success,
+  azeitona,
+  batataru,
+  bolo,
+  cha,
+  jalapenos,
+  milho,
+  nuggets,
+  paodealho,
   tomatoes,
   arrowBack,
   arrowDown,
@@ -200,5 +220,6 @@ export const images = {
   search,
   star,
   trash,
+  moto,
   user,
 };
