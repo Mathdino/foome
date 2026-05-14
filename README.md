@@ -48,17 +48,17 @@
 
 ## <a name="tech-stack"></a>⚙️ Tech Stack
 
-| Categoria          | Tecnologia                                              |
-| ------------------ | ------------------------------------------------------- |
-| Framework          | [Expo](https://expo.dev/) + [React Native](https://reactnative.dev/) `0.81` |
-| Linguagem          | [TypeScript](https://www.typescriptlang.org/) `5.9`     |
-| Roteamento         | [Expo Router](https://docs.expo.dev/router/introduction/) `6` (file-based, rotas tipadas) |
-| Estilização        | [NativeWind](https://www.nativewind.dev/) + [Tailwind CSS](https://tailwindcss.com/) |
-| Backend            | [Appwrite](https://appwrite.io/) (`react-native-appwrite`) |
-| Estado global      | [Zustand](https://github.com/pmndrs/zustand)            |
-| Animações          | [Reanimated](https://docs.swmansion.com/react-native-reanimated/) + Gesture Handler |
-| Imagens e mídia    | `expo-image`, `expo-image-picker`, `expo-file-system`   |
-| Observabilidade    | [Sentry](https://sentry.io/)                            |
+| Categoria       | Tecnologia                                                                                |
+| --------------- | ----------------------------------------------------------------------------------------- |
+| Framework       | [Expo](https://expo.dev/) + [React Native](https://reactnative.dev/) `0.81`               |
+| Linguagem       | [TypeScript](https://www.typescriptlang.org/) `5.9`                                       |
+| Roteamento      | [Expo Router](https://docs.expo.dev/router/introduction/) `6` (file-based, rotas tipadas) |
+| Estilização     | [NativeWind](https://www.nativewind.dev/) + [Tailwind CSS](https://tailwindcss.com/)      |
+| Backend         | [Appwrite](https://appwrite.io/) (`react-native-appwrite`)                                |
+| Estado global   | [Zustand](https://github.com/pmndrs/zustand)                                              |
+| Animações       | [Reanimated](https://docs.swmansion.com/react-native-reanimated/) + Gesture Handler       |
+| Imagens e mídia | `expo-image`, `expo-image-picker`, `expo-file-system`                                     |
+| Observabilidade | [Sentry](https://sentry.io/)                                                              |
 
 ## <a name="estrutura"></a>🗂️ Estrutura do projeto
 
@@ -134,18 +134,16 @@ Em seguida:
 
 ## <a name="scripts"></a>🧰 Scripts disponíveis
 
-| Comando             | Descrição                                       |
-| ------------------- | ----------------------------------------------- |
-| `npm start`         | Inicia o servidor de desenvolvimento do Expo    |
-| `npm run android`   | Abre o app no emulador/dispositivo Android      |
-| `npm run ios`       | Abre o app no simulador iOS                     |
-| `npm run web`       | Executa a versão web                            |
-| `npm run lint`      | Executa o ESLint                                |
+| Comando           | Descrição                                    |
+| ----------------- | -------------------------------------------- |
+| `npm start`       | Inicia o servidor de desenvolvimento do Expo |
+| `npm run android` | Abre o app no emulador/dispositivo Android   |
+| `npm run ios`     | Abre o app no simulador iOS                  |
+| `npm run web`     | Executa a versão web                         |
+| `npm run lint`    | Executa o ESLint                             |
 
 ## <a name="sentry"></a>📈 Monitoramento (Sentry)
 
 O projeto já está configurado com o plugin `@sentry/react-native/expo` apontando para a organização/projeto `foome`. Para ativar o envio de eventos em produção, configure o DSN do seu projeto Sentry e o auth token necessário para upload de source maps (consulte a [documentação oficial](https://docs.sentry.io/platforms/react-native/manual-setup/expo/)).
 
 ---
-
-<p align="center">Feito com 💜 — <strong>Foome</strong></p>
