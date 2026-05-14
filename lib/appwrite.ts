@@ -1,4 +1,5 @@
 import {
+  CreateOrderParams,
   CreateUserPrams,
   GetMenuParams,
   SignInParams,
@@ -25,6 +26,7 @@ export const appWriteConfig = {
   menuCollectionId: "menu",
   customizationsCollectionId: "customizations",
   menuCustomizationsCollectionId: "menu_customizations",
+  ordersCollectionId: "order",
 };
 
 export const client = new Client();
@@ -270,6 +272,38 @@ export const getCategories = async () => {
       appWriteConfig.categoriesCollectionId,
     );
     return categories.documents;
+  } catch (e) {
+    throw new Error(e as string);
+  }
+};
+
+export const createOrder = async (params: CreateOrderParams) => {
+  try {
+    return await database.createDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.ordersCollectionId,
+      ID.unique(),
+      {
+        ...params,
+        items: params.items.map((item) => JSON.stringify(item)),
+      },
+    );
+  } catch (e) {
+    throw new Error(e as string);
+  }
+};
+
+export const getOrders = async (userId: string) => {
+  try {
+    const res = await database.listDocuments(
+      appWriteConfig.databaseId,
+      appWriteConfig.ordersCollectionId,
+      [Query.equal("userId", userId), Query.orderDesc("$createdAt")],
+    );
+    return res.documents.map((doc) => ({
+      ...doc,
+      items: (doc.items as string[]).map((i) => JSON.parse(i)),
+    }));
   } catch (e) {
     throw new Error(e as string);
   }

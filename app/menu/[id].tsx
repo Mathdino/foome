@@ -6,15 +6,18 @@ import { appWriteConfig, getMenuById } from "@/lib/appwrite";
 import { getCustomizationImage } from "@/lib/customizationImages";
 import { useCartStore } from "@/store/cart.store";
 import { CartCustomization } from "@/type";
+import cn from "clsx";
 import { useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
-import {
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSequence,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type Customization = {
@@ -61,49 +64,67 @@ const Pill = ({
 
 const CustomizationCard = ({
   item,
-  onAdd,
+  selected,
+  onToggle,
 }: {
   item: Customization;
-  onAdd: () => void;
+  selected: boolean;
+  onToggle: () => void;
 }) => (
-  <View
-    className="w-32 mr-3 rounded-2xl bg-white items-center pt-4"
-    style={{
-      elevation: 4,
-      shadowColor: "#878787",
-      shadowOpacity: 0.15,
-      shadowRadius: 4,
-      shadowOffset: { width: 0, height: 2 },
-    }}
+  <TouchableOpacity
+    onPress={onToggle}
+    activeOpacity={0.85}
+    className={cn(
+      "w-32 mr-3 rounded-2xl items-center pt-4",
+      selected ? "bg-primary/10" : "bg-white",
+    )}
+    style={
+      selected
+        ? { borderWidth: 1.5, borderColor: "#FE8C00" }
+        : {
+            elevation: 4,
+            shadowColor: "#878787",
+            shadowOpacity: 0.15,
+            shadowRadius: 4,
+            shadowOffset: { width: 0, height: 2 },
+          }
+    }
   >
     <Image
       source={getCustomizationImage(item.name)}
       className="w-20 h-20"
       resizeMode="contain"
     />
-    <View className="w-full justify-between bg-dark-100 rounded-b-2xl px-2 py-2 mt-2">
+    <View
+      className={cn(
+        "w-full justify-between rounded-b-2xl px-2 py-2 mt-2",
+        selected ? "bg-primary" : "bg-dark-100",
+      )}
+    >
       <View className="flex-row items-center">
         <Text className="text-white small-bold flex-1" numberOfLines={2}>
           {item.name}
         </Text>
 
-        <TouchableOpacity
-          onPress={onAdd}
-          className="w-6 h-6 rounded-full bg-primary items-center justify-center ml-1"
+        <View
+          className={cn(
+            "w-6 h-6 rounded-full items-center justify-center ml-1",
+            selected ? "bg-white" : "bg-primary",
+          )}
         >
           <Image
-            source={images.plus}
+            source={selected ? images.check : images.plus}
             className="w-3 h-3"
             resizeMode="contain"
-            tintColor="#FFFFFF"
+            tintColor={selected ? "#FE8C00" : "#FFFFFF"}
           />
-        </TouchableOpacity>
+        </View>
       </View>
-      <Text className="text-white small-bold flex-1" numberOfLines={1}>
-        {formatPrice(item.price)}
+      <Text className="text-white small-bold" numberOfLines={1}>
+        +{formatPrice(item.price)}
       </Text>
     </View>
-  </View>
+  </TouchableOpacity>
 );
 
 const MenuDetails = () => {
@@ -114,6 +135,20 @@ const MenuDetails = () => {
   const [customizations, setCustomizations] = useState<Customization[]>([]);
   const [selected, setSelected] = useState<CartCustomization[]>([]);
   const [qty, setQty] = useState(1);
+
+  const scrollRef = useRef<ScrollView>(null);
+  const toastOpacity = useSharedValue(0);
+  const toastTranslate = useSharedValue(-30);
+  const btnScale = useSharedValue(1);
+
+  const toastStyle = useAnimatedStyle(() => ({
+    opacity: toastOpacity.value,
+    transform: [{ translateY: toastTranslate.value }],
+  }));
+
+  const btnStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: btnScale.value }],
+  }));
 
   useEffect(() => {
     if (!id) return;
@@ -165,12 +200,65 @@ const MenuDetails = () => {
         customizations: selected,
       });
     }
+
+    scrollRef.current?.scrollTo({ y: 0, animated: true });
+
+    btnScale.value = withSequence(
+      withTiming(0.94, { duration: 100 }),
+      withSpring(1, { damping: 6, stiffness: 200 }),
+    );
+
+    toastOpacity.value = withSequence(
+      withTiming(1, { duration: 220 }),
+      withDelay(1400, withTiming(0, { duration: 300 })),
+    );
+    toastTranslate.value = withSequence(
+      withTiming(0, { duration: 220 }),
+      withDelay(1400, withTiming(-30, { duration: 300 })),
+    );
   };
 
   return (
     <SafeAreaView className="bg-white h-full">
       <AnimatedScreen>
-        <ScrollView contentContainerClassName="pb-40 px-5 pt-5">
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            {
+              position: "absolute",
+              top: 16,
+              left: 20,
+              right: 20,
+              zIndex: 50,
+            },
+            toastStyle,
+          ]}
+        >
+          <View
+            className="flex-row items-center gap-2 bg-success rounded-full px-4 py-3"
+            style={{
+              elevation: 6,
+              shadowColor: "#000",
+              shadowOpacity: 0.2,
+              shadowRadius: 6,
+              shadowOffset: { width: 0, height: 3 },
+            }}
+          >
+            <View className="w-6 h-6 rounded-full bg-white items-center justify-center">
+              <Image
+                source={images.check}
+                className="w-3.5 h-3.5"
+                resizeMode="contain"
+                tintColor="#2F9B65"
+              />
+            </View>
+            <Text className="paragraph-bold text-white flex-1">
+              Adicionado ao carrinho!
+            </Text>
+          </View>
+        </Animated.View>
+
+        <ScrollView ref={scrollRef} contentContainerClassName="pb-40 px-5 pt-5">
           <CustomHeaderButton title={menu.name} />
 
           <View className="relative mt-4 min-h-[260px]">
@@ -257,7 +345,8 @@ const MenuDetails = () => {
                   <CustomizationCard
                     key={t.$id}
                     item={t}
-                    onAdd={() => toggleCustomization(t)}
+                    selected={selected.some((s) => s.id === t.$id)}
+                    onToggle={() => toggleCustomization(t)}
                   />
                 ))}
               </ScrollView>
@@ -274,10 +363,36 @@ const MenuDetails = () => {
                   <CustomizationCard
                     key={s.$id}
                     item={s}
-                    onAdd={() => toggleCustomization(s)}
+                    selected={selected.some((p) => p.id === s.$id)}
+                    onToggle={() => toggleCustomization(s)}
                   />
                 ))}
               </ScrollView>
+            </View>
+          )}
+
+          {selected.length > 0 && (
+            <View className="mt-5 bg-primary/5 border border-primary/20 rounded-2xl p-4">
+              <Text className="paragraph-bold text-dark-100 mb-2">
+                Selecionados
+              </Text>
+              {selected.map((c) => (
+                <View
+                  key={c.id}
+                  className="flex-row justify-between items-center py-1"
+                >
+                  <Text className="body-medium text-dark-100">+ {c.name}</Text>
+                  <Text className="body-medium text-primary">
+                    +{formatPrice(c.price)}
+                  </Text>
+                </View>
+              ))}
+              <View className="border-t border-primary/20 mt-2 pt-2 flex-row justify-between">
+                <Text className="paragraph-bold text-dark-100">Extras</Text>
+                <Text className="paragraph-bold text-primary">
+                  +{formatPrice(extras)}
+                </Text>
+              </View>
             </View>
           )}
         </ScrollView>
@@ -307,20 +422,22 @@ const MenuDetails = () => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            onPress={handleAddToCart}
-            className="flex-1 bg-primary rounded-full py-3 items-center justify-center flex-row gap-2"
-          >
-            <Image
-              source={images.bag}
-              className="w-4 h-4"
-              resizeMode="contain"
-              tintColor="#FFFFFF"
-            />
-            <Text className="paragraph-bold text-white">
-              Adicionar ({formatPrice(total)})
-            </Text>
-          </TouchableOpacity>
+          <Animated.View style={[{ flex: 1 }, btnStyle]}>
+            <TouchableOpacity
+              onPress={handleAddToCart}
+              className="bg-primary rounded-full py-3 items-center justify-center flex-row gap-2"
+            >
+              <Image
+                source={images.bag}
+                className="w-4 h-4"
+                resizeMode="contain"
+                tintColor="#FFFFFF"
+              />
+              <Text className="paragraph-bold text-white">
+                Adicionar ({formatPrice(total)})
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
       </AnimatedScreen>
     </SafeAreaView>

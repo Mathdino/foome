@@ -5,6 +5,7 @@ import CustomHeaderButton from "@/components/CustomHeaderButton";
 import { useCartStore } from "@/store/cart.store";
 import { PaymentInfoStripeProps } from "@/type";
 import cn from "clsx";
+import { router } from "expo-router";
 import { Text, View } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -51,7 +52,14 @@ const Cart = () => {
           ListHeaderComponent={() => (
             <CustomHeaderButton title="Seu Carrinho" />
           )}
-          ListEmptyComponent={() => <Text>Nenhum Item</Text>}
+          ListEmptyComponent={() => (
+            <View className="flex-center flex flex-col items-center justify-center mt-[50%]">
+              <Text className="h3-bold">Nenhum produto no carrinho. </Text>
+              <Text className="mt-4 body-regular text-gray-200">
+                Adicione produtos ao carrinho para continuar.
+              </Text>
+            </View>
+          )}
           ListFooterComponent={() =>
             totalItems > 0 && (
               <View className="gap-5">
@@ -70,23 +78,20 @@ const Cart = () => {
                     value={`R$5,00`}
                   />
 
-                  <PaymentInfoStripe
-                    label={`Desconto`}
-                    value={`- R$10,00`}
-                    valueStyle="!text-success"
-                  />
-
                   <View className="border-t border-gray-300 my-2" />
 
                   <PaymentInfoStripe
                     label={`Total a Pagar`}
                     labelStyle="base-bold !text-dark-100"
                     valueStyle="base-bold !text-dark-100 !text-right"
-                    value={`R$${(totalPrice + 5 - 10).toFixed(2).replace(".", ",")}`}
+                    value={`R$${(totalPrice + 5).toFixed(2).replace(".", ",")}`}
                   />
                 </View>
 
-                <CustomButton title="Finalizar Compra" />
+                <CustomButton
+                  title="Finalizar Compra"
+                  onPress={() => router.push("/checkout")}
+                />
               </View>
             )
           }

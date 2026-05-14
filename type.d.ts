@@ -114,3 +114,16 @@ interface GetMenuParams {
     category: string;
     query: string;
 }
+
+export interface CreateOrderParams {
+    userId: string;
+    items: CartItemType[];
+    subtotal: number;
+    deliveryFee: number;
+    couponCode: string;
+    couponDiscount: number;
+    total: number;
+    paymentMethod: string;
+    deliveryAddress: string;
+    status: string;
+}

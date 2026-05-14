@@ -53,8 +53,36 @@ const CartItem = ({ item }: { item: CartItemType }) => {
           >
             {item.name}
           </Text>
+
+          {item.customizations && item.customizations.length > 0 && (
+            <View className="mt-1.5 gap-0.5">
+              {item.customizations.map((c) => (
+                <View
+                  key={c.id}
+                  className="flex-row items-center justify-between"
+                >
+                  <Text
+                    className="body-medium text-gray-200 flex-1 pr-2"
+                    numberOfLines={1}
+                  >
+                    {c.name}
+                  </Text>
+                  <Text className="body-medium text-primary">
+                    +R${c.price.toFixed(2).replace(".", ",")}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+
           <Text className="paragraph-bold text-primary mt-1">
-            R${item.price.toString().replace(".", ",")}
+            R$
+            {(
+              item.price +
+              (item.customizations?.reduce((s, c) => s + c.price, 0) ?? 0)
+            )
+              .toFixed(2)
+              .replace(".", ",")}
           </Text>
 
           <View className="flex flex-row items-center gap-x-4 mt-2">
@@ -70,10 +98,7 @@ const CartItem = ({ item }: { item: CartItemType }) => {
               />
             </TouchableOpacity>
 
-            <AnimatedText
-              className="base-bold text-dark-100"
-              style={qtyStyle}
-            >
+            <AnimatedText className="base-bold text-dark-100" style={qtyStyle}>
               {item.quantity}
             </AnimatedText>
 
