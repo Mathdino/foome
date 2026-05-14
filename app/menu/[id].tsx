@@ -67,7 +67,7 @@ const CustomizationCard = ({
   onAdd: () => void;
 }) => (
   <View
-    className="w-28 mr-3 rounded-2xl bg-white items-center pt-4"
+    className="w-32 mr-3 rounded-2xl bg-white items-center pt-4"
     style={{
       elevation: 4,
       shadowColor: "#878787",
@@ -81,21 +81,27 @@ const CustomizationCard = ({
       className="w-20 h-20"
       resizeMode="contain"
     />
-    <View className="w-full flex-row items-center justify-between bg-dark-100 rounded-b-2xl px-2 py-2 mt-2">
+    <View className="w-full justify-between bg-dark-100 rounded-b-2xl px-2 py-2 mt-2">
+      <View className="flex-row items-center">
+        <Text className="text-white small-bold flex-1" numberOfLines={2}>
+          {item.name}
+        </Text>
+
+        <TouchableOpacity
+          onPress={onAdd}
+          className="w-6 h-6 rounded-full bg-primary items-center justify-center ml-1"
+        >
+          <Image
+            source={images.plus}
+            className="w-3 h-3"
+            resizeMode="contain"
+            tintColor="#FFFFFF"
+          />
+        </TouchableOpacity>
+      </View>
       <Text className="text-white small-bold flex-1" numberOfLines={1}>
-        {item.name}
+        {formatPrice(item.price)}
       </Text>
-      <TouchableOpacity
-        onPress={onAdd}
-        className="w-6 h-6 rounded-full bg-primary items-center justify-center ml-1"
-      >
-        <Image
-          source={images.plus}
-          className="w-3 h-3"
-          resizeMode="contain"
-          tintColor="#FFFFFF"
-        />
-      </TouchableOpacity>
     </View>
   </View>
 );
