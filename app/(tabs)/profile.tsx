@@ -1,6 +1,7 @@
 import AnimatedScreen from "@/components/AnimatedScreen";
 import CustomButton from "@/components/CustomButton";
 import CustomHeaderButton from "@/components/CustomHeaderButton";
+import Loading from "@/components/Loading";
 import { images } from "@/constants";
 import { signOut } from "@/lib/appwrite";
 import useAuthStore from "@/store/auth.store";
@@ -49,8 +50,16 @@ const InfoRow = ({ icon, label, value, placeholder }: InfoRowProps) => (
 );
 
 const Profile = () => {
-  const { user, setUser, setIsAuthenticated } = useAuthStore();
+  const { user, setUser, setIsAuthenticated, isLoading } = useAuthStore();
   const [isSigningOut, setIsSigningOut] = useState(false);
+
+  if (isLoading || !user) {
+    return (
+      <SafeAreaView className="bg-white h-full">
+        <Loading />
+      </SafeAreaView>
+    );
+  }
 
   const handleSignOut = async () => {
     Alert.alert("Sair", "Tem certeza que deseja sair?", [

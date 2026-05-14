@@ -1,6 +1,7 @@
 import AnimatedScreen from "@/components/AnimatedScreen";
 import CartButton from "@/components/CartButton";
 import Filter from "@/components/Filter";
+import Loading from "@/components/Loading";
 import MenuCard from "@/components/MenuCard";
 import SeacrhBar from "@/components/SeacrhBar";
 import { images } from "@/constants";
@@ -78,7 +79,9 @@ const Search = () => {
             </View>
           )}
           ListEmptyComponent={() =>
-            !loading && (
+            loading ? (
+              <Loading fullscreen={false} />
+            ) : (
               <View className="flex-center">
                 <Image
                   source={images.emptyState}

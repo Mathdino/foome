@@ -1,4 +1,3 @@
-import { useIsFocused } from "@react-navigation/native";
 import React from "react";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 
@@ -12,26 +11,21 @@ type Props = {
 };
 
 /**
- * Envolve o conteúdo de uma tela e dispara uma animação de entrada toda vez
- * que a tela ganha foco (útil para tabs, onde o componente não desmonta).
+ * Envolve o conteúdo de uma tela e dispara uma animação de entrada na
+ * primeira montagem. Antes era refeita a cada foco (via key), o que causava
+ * remount e tela branca ao trocar de aba — agora é uma animação só na entrada.
  */
-const AnimatedScreen = ({
-  children,
-  className,
-  variant = "fadeUp",
-}: Props) => {
-  const isFocused = useIsFocused();
+const AnimatedScreen = ({ children, className, variant = "fadeUp" }: Props) => {
   const animation =
     variant === "fade"
-      ? FadeIn.duration(260)
-      : FadeInDown.duration(280).springify().damping(18);
+      ? FadeIn.duration(220)
+      : FadeInDown.duration(240).springify().damping(18);
 
   return (
     <Animated.View
-      key={isFocused ? "focused" : "blurred"}
       className={className}
       entering={animation}
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: "#FFFFFF" }}
     >
       {children}
     </Animated.View>

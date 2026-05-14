@@ -1,5 +1,6 @@
 import AnimatedScreen from "@/components/AnimatedScreen";
 import CustomHeaderButton from "@/components/CustomHeaderButton";
+import Loading from "@/components/Loading";
 import { images } from "@/constants";
 import { appWriteConfig, getMenuById } from "@/lib/appwrite";
 import { getCustomizationImage } from "@/lib/customizationImages";
@@ -8,7 +9,6 @@ import { CartCustomization } from "@/type";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Image,
   ScrollView,
   Text,
@@ -132,9 +132,7 @@ const MenuDetails = () => {
   if (loading || !menu) {
     return (
       <SafeAreaView className="bg-white h-full">
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator color="#FE8C00" />
-        </View>
+        <Loading />
       </SafeAreaView>
     );
   }

@@ -2,6 +2,7 @@ import AnimatedScreen from "@/components/AnimatedScreen";
 import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
 import Custominput from "@/components/Custominput";
+import Loading from "@/components/Loading";
 import { updateUserProfile } from "@/lib/appwrite";
 import { formatPhone } from "@/lib/masks";
 import useAuthStore from "@/store/auth.store";
@@ -18,7 +19,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const EditProfile = () => {
-  const { user, setUser } = useAuthStore();
+  const { user, setUser, isLoading } = useAuthStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [name, setName] = useState(user?.name ?? "");
   const [phone, setPhone] = useState(formatPhone(user?.phones ?? ""));
@@ -65,6 +66,14 @@ const EditProfile = () => {
       setIsSubmitting(false);
     }
   };
+
+  if (isLoading || !user) {
+    return (
+      <SafeAreaView className="bg-white h-full">
+        <Loading />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="bg-white h-full">
